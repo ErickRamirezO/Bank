@@ -1,0 +1,70 @@
+entity User {
+    firstName String required
+    lastName String required
+    birthDate LocalDate required
+    address String
+    email String required unique
+    role String required
+    password String required
+    registrationDate Instant
+    accountLockedUntil LocalDate
+    failedLoginAttempts Integer
+    status Integer required
+}
+
+entity Alert {
+    alertType String required
+    alertTime Instant
+    emailSent Boolean required
+    details String
+}
+
+entity Log {
+    eventType String required
+    eventTime Instant
+    ipAddress String
+    description String
+}
+
+entity UserData {
+    salary BigDecimal required
+    familyLoad Integer required
+    workplace String required
+    housingType String
+    rentCost BigDecimal
+    yearsOfEmployment Integer required
+    employmentStatus Integer required
+}
+
+entity Loan {
+    requestedAmount BigDecimal required
+    interestRate BigDecimal required
+    paymentTermMonths Integer required
+    applicationDate LocalDate
+    status Integer required
+}
+
+entity Amortization {
+    installmentNumber Integer required
+    dueDate LocalDate required
+    remainingBalance BigDecimal required
+    principal BigDecimal required
+    paymentDate LocalDate
+    paymentAmount BigDecimal required
+    penaltyInterest BigDecimal
+}
+
+relationship ManyToOne {
+    Alert{user} to User
+    Log{user} to User
+    UserData{user} to User
+    Loan{user} to User
+    Amortization{loan} to Loan
+}
+
+paginate Loan, Amortization with pagination
+paginate Log, Alert with infinite-scroll
+
+dto * with mapstruct
+
+service all with serviceImpl
