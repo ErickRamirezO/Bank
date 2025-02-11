@@ -155,7 +155,7 @@ export const Loan = () => {
                     {loan.applicationDate ? <TextFormat type="date" value={loan.applicationDate} format={APP_LOCAL_DATE_FORMAT} /> : null}
                   </td>
                   <td>{loan.status}</td>
-                  <td>{loan.user ? loan.user.login : ''}</td>
+                  <td>{loan.user ? loan.user.id : ''}</td>
                   <td className="text-end">
                     <div className="btn-group flex-btn-group-container">
                       <Button tag={Link} to={`/loan/${loan.id}`} color="info" size="sm" data-cy="entityDetailsButton">

@@ -55,8 +55,8 @@ public class AuthenticateController {
     @PostMapping("/authenticate")
     public ResponseEntity<JWTToken> authorize(@Valid @RequestBody LoginVM loginVM) {
         UsernamePasswordAuthenticationToken authenticationToken = new UsernamePasswordAuthenticationToken(
-            loginVM.getUsername(),
-            loginVM.getPassword()
+            sanitize(loginVM.getUsername()),
+            sanitize(loginVM.getPassword())
         );
 
         Authentication authentication = authenticationManagerBuilder.getObject().authenticate(authenticationToken);
@@ -76,7 +76,7 @@ public class AuthenticateController {
     @GetMapping(value = "/authenticate", produces = MediaType.TEXT_PLAIN_VALUE)
     public String isAuthenticated(Principal principal) {
         LOG.debug("REST request to check if the current user is authenticated");
-        return principal == null ? null : principal.getName();
+        return principal == null ? null : sanitize(principal.getName());
     }
 
     public String createToken(Authentication authentication, boolean rememberMe) {
@@ -94,12 +94,16 @@ public class AuthenticateController {
         JwtClaimsSet claims = JwtClaimsSet.builder()
             .issuedAt(now)
             .expiresAt(validity)
-            .subject(authentication.getName())
+            .subject(sanitize(authentication.getName()))
             .claim(AUTHORITIES_KEY, authorities)
             .build();
 
         JwsHeader jwsHeader = JwsHeader.with(JWT_ALGORITHM).build();
         return this.jwtEncoder.encode(JwtEncoderParameters.from(jwsHeader, claims)).getTokenValue();
+    }
+
+    private String sanitize(String input) {
+        return input == null ? null : input.replaceAll("[^a-zA-Z0-9]", "");
     }
 
     /**
