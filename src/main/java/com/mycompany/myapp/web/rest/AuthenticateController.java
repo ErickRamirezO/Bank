@@ -55,8 +55,8 @@ public class AuthenticateController {
     @PostMapping("/authenticate")
     public ResponseEntity<JWTToken> authorize(@Valid @RequestBody LoginVM loginVM) {
         UsernamePasswordAuthenticationToken authenticationToken = new UsernamePasswordAuthenticationToken(
-            sanitize(loginVM.getUsername()),
-            sanitize(loginVM.getPassword())
+            loginVM.getUsername(),
+            loginVM.getPassword()
         );
 
         Authentication authentication = authenticationManagerBuilder.getObject().authenticate(authenticationToken);
@@ -74,9 +74,11 @@ public class AuthenticateController {
      * @return the login if the user is authenticated.
      */
     @GetMapping(value = "/authenticate", produces = MediaType.TEXT_PLAIN_VALUE)
-    public String isAuthenticated(Principal principal) {
+    public ResponseEntity<String> isAuthenticated(Principal principal) {
         LOG.debug("REST request to check if the current user is authenticated");
-        return principal == null ? null : sanitize(principal.getName());
+        return principal == null
+            ? ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("User is not authenticated")
+            : ResponseEntity.ok("User is authenticated");
     }
 
     public String createToken(Authentication authentication, boolean rememberMe) {
@@ -94,16 +96,12 @@ public class AuthenticateController {
         JwtClaimsSet claims = JwtClaimsSet.builder()
             .issuedAt(now)
             .expiresAt(validity)
-            .subject(sanitize(authentication.getName()))
+            .subject(authentication.getName())
             .claim(AUTHORITIES_KEY, authorities)
             .build();
 
         JwsHeader jwsHeader = JwsHeader.with(JWT_ALGORITHM).build();
         return this.jwtEncoder.encode(JwtEncoderParameters.from(jwsHeader, claims)).getTokenValue();
-    }
-
-    private String sanitize(String input) {
-        return input == null ? null : input.replaceAll("[^a-zA-Z0-9]", "");
     }
 
     /**
