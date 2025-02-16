@@ -4,13 +4,14 @@ import { Button, Table } from 'reactstrap';
 import { JhiItemCount, JhiPagination, TextFormat, Translate, getPaginationState } from 'react-jhipster';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faSort, faSortDown, faSortUp } from '@fortawesome/free-solid-svg-icons';
-import { APP_LOCAL_DATE_FORMAT } from 'app/config/constants';
+import {APP_LOCAL_DATE_FORMAT, AUTHORITIES} from 'app/config/constants';
 import { ASC, DESC, ITEMS_PER_PAGE, SORT } from 'app/shared/util/pagination.constants';
 import { overridePaginationStateWithQueryParams } from 'app/shared/util/entity-utils';
 import { useAppDispatch, useAppSelector } from 'app/config/store';
 import { getUsers } from 'app/modules/administration/user-management/user-management.reducer';
 
 import { getEntities } from './loan.reducer';
+import {hasAnyAuthority} from "app/shared/auth/private-route";
 
 export const Loan = () => {
   const dispatch = useAppDispatch();
@@ -26,6 +27,10 @@ export const Loan = () => {
   const loading = useAppSelector(state => state.loan.loading);
   const totalItems = useAppSelector(state => state.loan.totalItems);
   const users = useAppSelector(state => state.userManagement.users);
+  const currentUserId = useAppSelector(state => state.authentication.account.id);
+  const currentUserIsAdmin = useAppSelector(state =>
+    hasAnyAuthority(state.authentication.account.authorities, [AUTHORITIES.ADMIN])
+  );
 
   const getAllEntities = () => {
     dispatch(
@@ -101,6 +106,27 @@ export const Loan = () => {
     return order === ASC ? faSortUp : faSortDown;
   };
 
+  const transformStatus = (status) => {
+    switch (status) {
+      case 0:
+        return 'Pendiente';
+      case 1:
+        return 'Aprobado';
+      case 2:
+        return 'Rechazado';
+      case 3:
+        return 'Pagado';
+      case 4:
+        return 'En mora';
+      default:
+        return 'Desconocido';
+    }
+  };
+
+  const filteredLoanList = currentUserIsAdmin
+    ? loanList
+    : loanList.filter((loan) => loan.user?.id === currentUserId);
+
   return (
     <div>
       <h2 id="loan-heading" data-cy="LoanHeading">
@@ -118,7 +144,7 @@ export const Loan = () => {
         </div>
       </h2>
       <div className="table-responsive">
-        {loanList && loanList.length > 0 ? (
+        {filteredLoanList  && filteredLoanList .length > 0 ? (
           <Table responsive>
             <thead>
             <tr>
@@ -153,7 +179,7 @@ export const Loan = () => {
             </tr>
             </thead>
             <tbody>
-            {loanList.map((loan, i) => (
+            {filteredLoanList.map((loan, i) => (
               <tr key={`entity-${i}`} data-cy="entityTable">
                 <td>
                   <Button tag={Link} to={`/loan/${loan.id}`} color="link" size="sm">
@@ -166,7 +192,7 @@ export const Loan = () => {
                 <td>
                   {loan.applicationDate ? <TextFormat type="date" value={loan.applicationDate} format={APP_LOCAL_DATE_FORMAT} /> : null}
                 </td>
-                <td>{loan.status}</td>
+                <td>{transformStatus(loan.status)}</td>
                 <td>{loan.user ? getUserLogin(loan.user.id) : 'N/A'}</td>
                 <td className="text-end">
                 <div className="btn-group flex-btn-group-container">
@@ -210,7 +236,7 @@ export const Loan = () => {
         ) : (
           !loading && (
             <div className="alert alert-warning">
-              <Translate contentKey="jhipsterSampleApplicationApp.loan.home.notFound">No Loans found</Translate>
+              <Translate contentKey="jhipsterSampleApplicationApp.prestamos.home.notFound">No Loans found</Translate>
             </div>
           )
         )}

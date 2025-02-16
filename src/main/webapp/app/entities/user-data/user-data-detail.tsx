@@ -76,7 +76,7 @@ export const UserDataDetail = () => {
           <dt>
             <Translate contentKey="jhipsterSampleApplicationApp.userData.user">User</Translate>
           </dt>
-          <dd>{userDataEntity.user ? userDataEntity.user.id : ''}</dd>
+          <dd>{userDataEntity.user ? userDataEntity.user.login : ''}</dd>
         </dl>
         <Button tag={Link} to="/user-data" replace color="info" data-cy="entityDetailsBackButton">
           <FontAwesomeIcon icon="arrow-left" />{' '}

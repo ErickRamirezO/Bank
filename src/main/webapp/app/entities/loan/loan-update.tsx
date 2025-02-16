@@ -3,6 +3,8 @@ import { Link, useNavigate, useParams } from 'react-router-dom';
 import { Button, Col, Row } from 'reactstrap';
 import { Translate, ValidatedField, ValidatedForm, isNumber, translate } from 'react-jhipster';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { hasAnyAuthority } from 'app/shared/auth/private-route';
+import { AUTHORITIES } from 'app/config/constants';
 
 import { useAppDispatch, useAppSelector } from 'app/config/store';
 
@@ -22,6 +24,9 @@ export const LoanUpdate = () => {
   const loading = useAppSelector(state => state.loan.loading);
   const updating = useAppSelector(state => state.loan.updating);
   const updateSuccess = useAppSelector(state => state.loan.updateSuccess);
+  const currentUserIsAdmin = useAppSelector(state =>
+    hasAnyAuthority(state.authentication.account.authorities, [AUTHORITIES.ADMIN])
+  );
 
   const handleClose = () => {
     navigate(`/loan${location.search}`);
@@ -56,15 +61,16 @@ export const LoanUpdate = () => {
     if (values.paymentTermMonths !== undefined && typeof values.paymentTermMonths !== 'number') {
       values.paymentTermMonths = Number(values.paymentTermMonths);
     }
-    if (values.status !== undefined && typeof values.status !== 'number') {
-      values.status = Number(values.status);
-    }
 
     const entity = {
       ...loanEntity,
       ...values,
       user: users.find(it => it.id.toString() === values.user?.toString()),
     };
+
+    if (!currentUserIsAdmin) {
+      entity.status = loanEntity.status; // Mantiene el estado actual sin cambios
+    }
 
     if (isNew) {
       dispatch(createEntity(entity));
@@ -146,17 +152,23 @@ export const LoanUpdate = () => {
                 data-cy="applicationDate"
                 type="date"
               />
-              <ValidatedField
-                label={translate('jhipsterSampleApplicationApp.prestamos.status')}
-                id="loan-status"
-                name="status"
-                data-cy="status"
-                type="text"
-                validate={{
-                  required: { value: true, message: translate('entity.validation.required') },
-                  validate: v => isNumber(v) || translate('entity.validation.number'),
-                }}
-              />
+              {currentUserIsAdmin ? (
+                <ValidatedField
+                  label={translate('jhipsterSampleApplicationApp.prestamos.status')}
+                  id="loan-status"
+                  name="status"
+                  data-cy="status"
+                  type="select"
+                >
+                  <option value="0">Pendiente</option>
+                  <option value="1">Aprobado</option>
+                  <option value="2">Rechazado</option>
+                  <option value="3">Pagado</option>
+                  <option value="4">En mora</option>
+                </ValidatedField>
+              ) : (
+                <input type="hidden" name="status" value={defaultValues().status} />
+              )}
               <ValidatedField
                 id="loan-user"
                 name="user"

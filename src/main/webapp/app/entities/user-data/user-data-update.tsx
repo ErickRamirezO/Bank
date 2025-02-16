@@ -80,9 +80,9 @@ export const UserDataUpdate = () => {
     isNew
       ? {}
       : {
-          ...userDataEntity,
-          user: userDataEntity?.user?.id,
-        };
+        ...userDataEntity,
+        user: userDataEntity?.user?.id,
+      };
 
   return (
     <div>
@@ -109,6 +109,22 @@ export const UserDataUpdate = () => {
                   validate={{ required: true }}
                 />
               ) : null}
+              <ValidatedField
+                id="user-data-user"
+                name="user"
+                data-cy="user"
+                label={translate('jhipsterSampleApplicationApp.userData.user')}
+                type="select"
+              >
+                <option value="" key="0" />
+                {users
+                  ? users.map(otherEntity => (
+                    <option value={otherEntity.id} key={otherEntity.id}>
+                      {otherEntity.login}
+                    </option>
+                  ))
+                  : null}
+              </ValidatedField>
               <ValidatedField
                 label={translate('jhipsterSampleApplicationApp.userData.salary')}
                 id="user-data-salary"
@@ -171,27 +187,18 @@ export const UserDataUpdate = () => {
                 id="user-data-employmentStatus"
                 name="employmentStatus"
                 data-cy="employmentStatus"
-                type="text"
+                type="select"
                 validate={{
                   required: { value: true, message: translate('entity.validation.required') },
-                  validate: v => isNumber(v) || translate('entity.validation.number'),
                 }}
-              />
-              <ValidatedField
-                id="user-data-user"
-                name="user"
-                data-cy="user"
-                label={translate('jhipsterSampleApplicationApp.userData.user')}
-                type="select"
               >
-                <option value="" key="0" />
-                {users
-                  ? users.map(otherEntity => (
-                      <option value={otherEntity.id} key={otherEntity.id}>
-                        {otherEntity.login}
-                      </option>
-                    ))
-                  : null}
+                <option value="0">Activo</option>
+                <option value="1">Inactivo</option>
+                <option value="2">Suspendido</option>
+                <option value="3">Terminado</option>
+                <option value="4">En licencia</option>
+                <option value="5">Retirado</option>
+                <option value="6">En entrenamiento</option>
               </ValidatedField>
               <Button tag={Link} id="cancel-save" data-cy="entityCreateCancelButton" to="/user-data" replace color="info">
                 <FontAwesomeIcon icon="arrow-left" />

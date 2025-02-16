@@ -9,6 +9,19 @@ import { overrideSortStateWithQueryParams } from 'app/shared/util/entity-utils';
 import { useAppDispatch, useAppSelector } from 'app/config/store';
 
 import { getEntities } from './user-data.reducer';
+import {getUsers} from "app/modules/administration/user-management/user-management.reducer";
+import {hasAnyAuthority} from "app/shared/auth/private-route";
+import {AUTHORITIES} from "app/config/constants";
+
+const employmentStatusMap = {
+  0: 'Active',
+  1: 'Inactive',
+  2: 'Suspended',
+  3: 'Terminated',
+  4: 'On Leave',
+  5: 'Retired',
+  6: 'In Training',
+};
 
 export const UserData = () => {
   const dispatch = useAppDispatch();
@@ -20,6 +33,11 @@ export const UserData = () => {
 
   const userDataList = useAppSelector(state => state.userData.entities);
   const loading = useAppSelector(state => state.userData.loading);
+  const users = useAppSelector(state => state.userManagement.users);
+  const currentUserId = useAppSelector(state => state.authentication.account.id);
+  const currentUserIsAdmin = useAppSelector(state =>
+    hasAnyAuthority(state.authentication.account.authorities, [AUTHORITIES.ADMIN])
+  );
 
   const getAllEntities = () => {
     dispatch(
@@ -27,6 +45,16 @@ export const UserData = () => {
         sort: `${sortState.sort},${sortState.order}`,
       }),
     );
+  };
+
+  useEffect(() => {
+    const params = { page: 0, size: 10, sort: 'id,asc' }; // Pasar valores predeterminados
+    dispatch(getUsers(params)); // Cargar la lista de usuarios al montar el componente
+  }, [dispatch]);
+
+  const getUserLogin = userId => {
+    const user = users.find(u => u.id === userId);
+    return user ? user.login : 'N/A';
   };
 
   const sortEntities = () => {
@@ -62,6 +90,10 @@ export const UserData = () => {
     return order === ASC ? faSortUp : faSortDown;
   };
 
+  const filteredUserDataList = currentUserIsAdmin
+    ? userDataList
+    : userDataList.filter((userData) => userData.user?.id === currentUserId);
+
   return (
     <div>
       <h2 id="user-data-heading" data-cy="UserDataHeading">
@@ -79,93 +111,98 @@ export const UserData = () => {
         </div>
       </h2>
       <div className="table-responsive">
-        {userDataList && userDataList.length > 0 ? (
+        {filteredUserDataList && filteredUserDataList.length > 0 ? (
           <Table responsive>
             <thead>
-              <tr>
-                <th className="hand" onClick={sort('id')}>
-                  <Translate contentKey="jhipsterSampleApplicationApp.userData.id">ID</Translate>{' '}
-                  <FontAwesomeIcon icon={getSortIconByFieldName('id')} />
-                </th>
-                <th className="hand" onClick={sort('salary')}>
-                  <Translate contentKey="jhipsterSampleApplicationApp.userData.salary">Salary</Translate>{' '}
-                  <FontAwesomeIcon icon={getSortIconByFieldName('salary')} />
-                </th>
-                <th className="hand" onClick={sort('familyLoad')}>
-                  <Translate contentKey="jhipsterSampleApplicationApp.userData.familyLoad">Family Load</Translate>{' '}
-                  <FontAwesomeIcon icon={getSortIconByFieldName('familyLoad')} />
-                </th>
-                <th className="hand" onClick={sort('workplace')}>
-                  <Translate contentKey="jhipsterSampleApplicationApp.userData.workplace">Workplace</Translate>{' '}
-                  <FontAwesomeIcon icon={getSortIconByFieldName('workplace')} />
-                </th>
-                <th className="hand" onClick={sort('housingType')}>
-                  <Translate contentKey="jhipsterSampleApplicationApp.userData.housingType">Housing Type</Translate>{' '}
-                  <FontAwesomeIcon icon={getSortIconByFieldName('housingType')} />
-                </th>
-                <th className="hand" onClick={sort('rentCost')}>
-                  <Translate contentKey="jhipsterSampleApplicationApp.userData.rentCost">Rent Cost</Translate>{' '}
-                  <FontAwesomeIcon icon={getSortIconByFieldName('rentCost')} />
-                </th>
-                <th className="hand" onClick={sort('yearsOfEmployment')}>
-                  <Translate contentKey="jhipsterSampleApplicationApp.userData.yearsOfEmployment">Years Of Employment</Translate>{' '}
-                  <FontAwesomeIcon icon={getSortIconByFieldName('yearsOfEmployment')} />
-                </th>
-                <th className="hand" onClick={sort('employmentStatus')}>
-                  <Translate contentKey="jhipsterSampleApplicationApp.userData.employmentStatus">Employment Status</Translate>{' '}
-                  <FontAwesomeIcon icon={getSortIconByFieldName('employmentStatus')} />
-                </th>
-                <th>
-                  <Translate contentKey="jhipsterSampleApplicationApp.userData.user">User</Translate> <FontAwesomeIcon icon="sort" />
-                </th>
-                <th />
-              </tr>
+            <tr>
+              <th className="hand" onClick={sort('id')}>
+                <Translate contentKey="jhipsterSampleApplicationApp.userData.id">ID</Translate>{' '}
+                <FontAwesomeIcon icon={getSortIconByFieldName('id')}/>
+              </th>
+              <th>
+                <Translate contentKey="jhipsterSampleApplicationApp.userData.user">User</Translate> <FontAwesomeIcon
+                icon="sort"/>
+              </th>
+              <th className="hand" onClick={sort('salary')}>
+                <Translate contentKey="jhipsterSampleApplicationApp.userData.salary">Salary</Translate>{' '}
+                <FontAwesomeIcon icon={getSortIconByFieldName('salary')}/>
+              </th>
+              <th className="hand" onClick={sort('familyLoad')}>
+                <Translate contentKey="jhipsterSampleApplicationApp.userData.familyLoad">Family Load</Translate>{' '}
+                <FontAwesomeIcon icon={getSortIconByFieldName('familyLoad')}/>
+              </th>
+              <th className="hand" onClick={sort('workplace')}>
+                <Translate contentKey="jhipsterSampleApplicationApp.userData.workplace">Workplace</Translate>{' '}
+                <FontAwesomeIcon icon={getSortIconByFieldName('workplace')}/>
+              </th>
+              <th className="hand" onClick={sort('housingType')}>
+                <Translate contentKey="jhipsterSampleApplicationApp.userData.housingType">Housing Type</Translate>{' '}
+                <FontAwesomeIcon icon={getSortIconByFieldName('housingType')}/>
+              </th>
+              <th className="hand" onClick={sort('rentCost')}>
+                <Translate contentKey="jhipsterSampleApplicationApp.userData.rentCost">Rent Cost</Translate>{' '}
+                <FontAwesomeIcon icon={getSortIconByFieldName('rentCost')}/>
+              </th>
+              <th className="hand" onClick={sort('yearsOfEmployment')}>
+                <Translate contentKey="jhipsterSampleApplicationApp.userData.yearsOfEmployment">Years Of
+                  Employment</Translate>{' '}
+                <FontAwesomeIcon icon={getSortIconByFieldName('yearsOfEmployment')}/>
+              </th>
+              <th className="hand" onClick={sort('employmentStatus')}>
+                <Translate contentKey="jhipsterSampleApplicationApp.userData.employmentStatus">Employment
+                  Status</Translate>{' '}
+                <FontAwesomeIcon icon={getSortIconByFieldName('employmentStatus')}/>
+              </th>
+              <th/>
+            </tr>
             </thead>
             <tbody>
-              {userDataList.map((userData, i) => (
-                <tr key={`entity-${i}`} data-cy="entityTable">
-                  <td>
-                    <Button tag={Link} to={`/user-data/${userData.id}`} color="link" size="sm">
-                      {userData.id}
-                    </Button>
-                  </td>
-                  <td>{userData.salary}</td>
-                  <td>{userData.familyLoad}</td>
-                  <td>{userData.workplace}</td>
-                  <td>{userData.housingType}</td>
-                  <td>{userData.rentCost}</td>
-                  <td>{userData.yearsOfEmployment}</td>
-                  <td>{userData.employmentStatus}</td>
-                  <td>{userData.user ? userData.user.id : ''}</td>
-                  <td className="text-end">
-                    <div className="btn-group flex-btn-group-container">
-                      <Button tag={Link} to={`/user-data/${userData.id}`} color="info" size="sm" data-cy="entityDetailsButton">
-                        <FontAwesomeIcon icon="eye" />{' '}
-                        <span className="d-none d-md-inline">
+            {filteredUserDataList.map((userData, i) => (
+              <tr key={`entity-${i}`} data-cy="entityTable">
+                <td>
+                  <Button tag={Link} to={`/user-data/${userData.id}`} color="link" size="sm">
+                    {userData.id}
+                  </Button>
+                </td>
+                <td>{userData.user ? getUserLogin(userData.user.id) : 'N/A'}</td>
+                <td>{userData.salary}</td>
+                <td>{userData.familyLoad}</td>
+                <td>{userData.workplace}</td>
+                <td>{userData.housingType}</td>
+                <td>{userData.rentCost}</td>
+                <td>{userData.yearsOfEmployment}</td>
+                <td>{employmentStatusMap[userData.employmentStatus]}</td>
+                <td className="text-end">
+                  <div className="btn-group flex-btn-group-container">
+                    <Button tag={Link} to={`/user-data/${userData.id}`} color="info" size="sm"
+                            data-cy="entityDetailsButton">
+                      <FontAwesomeIcon icon="eye"/>{' '}
+                      <span className="d-none d-md-inline">
                           <Translate contentKey="entity.action.view">View</Translate>
                         </span>
-                      </Button>
-                      <Button tag={Link} to={`/user-data/${userData.id}/edit`} color="primary" size="sm" data-cy="entityEditButton">
-                        <FontAwesomeIcon icon="pencil-alt" />{' '}
-                        <span className="d-none d-md-inline">
+                    </Button>
+                    <Button tag={Link} to={`/user-data/${userData.id}/edit`} color="primary" size="sm"
+                            data-cy="entityEditButton">
+                      <FontAwesomeIcon icon="pencil-alt"/>{' '}
+                      <span className="d-none d-md-inline">
                           <Translate contentKey="entity.action.edit">Edit</Translate>
                         </span>
-                      </Button>
-                      <Button
-                        onClick={() => (window.location.href = `/user-data/${userData.id}/delete`)}
-                        color="danger"
-                        size="sm"
-                        data-cy="entityDeleteButton"
-                      >
-                        <FontAwesomeIcon icon="trash" />{' '}
-                        <span className="d-none d-md-inline">
+                    </Button>
+                    <Button
+                      onClick={() => (window.location.href = `/user-data/${userData.id}/delete`)}
+                      color="danger"
+                      size="sm"
+                      data-cy="entityDeleteButton"
+                    >
+                      <FontAwesomeIcon icon="trash"/>{' '}
+                      <span className="d-none d-md-inline">
                           <Translate contentKey="entity.action.delete">Delete</Translate>
                         </span>
-                      </Button>
-                    </div>
-                  </td>
-                </tr>
-              ))}
+                    </Button>
+                  </div>
+                </td>
+              </tr>
+            ))}
             </tbody>
           </Table>
         ) : (

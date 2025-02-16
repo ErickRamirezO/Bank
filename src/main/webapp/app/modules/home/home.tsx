@@ -32,7 +32,7 @@ export const Home = () => {
                   <Translate contentKey="home.loan">Hacer un préstamo</Translate>
                 </Button>
                 <Button color="success" tag={Link} to="/amortization" className="btn-lg">
-                  <Translate contentKey="home.payment">Hacer un pago</Translate>
+                  <Translate contentKey="home.amortization">Amortizaciones</Translate>
                 </Button>
               </div>
             </>
