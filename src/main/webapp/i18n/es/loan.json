@@ -18,12 +18,12 @@
         "title": "Préstamos"
       },
       "id": "ID",
-      "requestedAmount": "Requested Amount",
-      "interestRate": "Interest Rate",
-      "paymentTermMonths": "Payment Term Months",
-      "applicationDate": "Application Date",
-      "status": "Status",
-      "user": "User"
+      "requestedAmount": "Monto Solicitado",
+      "interestRate": "Tasa de Interés",
+      "paymentTermMonths": "Plazo de Pago (Meses)",
+      "applicationDate": "Fecha de Solicitud",
+      "status": "Estado",
+      "user": "Usuario"
     }
   }
 }

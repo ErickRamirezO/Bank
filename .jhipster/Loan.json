@@ -34,10 +34,12 @@
   "pagination": "pagination",
   "relationships": [
     {
+      "otherEntityField": "id",
       "otherEntityName": "user",
       "relationshipName": "user",
       "relationshipSide": "left",
-      "relationshipType": "many-to-one"
+      "relationshipType": "many-to-one",
+      "relationshipWithBuiltInEntity": true
     }
   ],
   "searchEngine": "no",

@@ -2,30 +2,30 @@
   "jhipsterSampleApplicationApp": {
     "amortization": {
       "home": {
-        "title": "Amortizations",
+        "title": "Amortización",
         "refreshListLabel": "Refrescar lista",
-        "createLabel": "Crear nuevo Amortization",
-        "createOrEditLabel": "Crear o editar Amortization",
-        "notFound": "Ningún Amortizations encontrado"
+        "createLabel": "Crear nueva Amortización",
+        "createOrEditLabel": "Crear o editar Amortización",
+        "notFound": "Ninguna amortización encontrada"
       },
-      "created": "Un nuevo Amortization ha sido creado con el identificador {{ param }}",
-      "updated": "Un Amortization ha sido actualizado con el identificador {{ param }}",
-      "deleted": "Un Amortization ha sido eliminado con el identificador {{ param }}",
+      "created": "Una nueva amortización ha sido creado con el identificador {{ param }}",
+      "updated": "Una nueva amortización ha sido actualizado con el identificador {{ param }}",
+      "deleted": "Una nueva amortización ha sido eliminado con el identificador {{ param }}",
       "delete": {
-        "question": "¿Seguro que quiere eliminar Amortization {{ id }}?"
+        "question": "¿Seguro que quiere eliminar la amortización {{ id }}?"
       },
       "detail": {
-        "title": "Amortization"
+        "title": "Amortización"
       },
       "id": "ID",
-      "installmentNumber": "Installment Number",
-      "dueDate": "Due Date",
-      "remainingBalance": "Remaining Balance",
-      "principal": "Principal",
-      "paymentDate": "Payment Date",
-      "paymentAmount": "Payment Amount",
-      "penaltyInterest": "Penalty Interest",
-      "loan": "Loan"
+      "installmentNumber": "Número de cuota",
+      "dueDate": "Fecha de vencimiento",
+      "remainingBalance": "Saldo restante",
+      "principal": "Capital",
+      "paymentDate": "Fecha de pago",
+      "paymentAmount": "Monto del pago",
+      "penaltyInterest": "Interés por penalización",
+      "loan": "Préstamo"
     }
   }
 }

@@ -8,6 +8,7 @@ import { APP_LOCAL_DATE_FORMAT } from 'app/config/constants';
 import { ASC, DESC, ITEMS_PER_PAGE, SORT } from 'app/shared/util/pagination.constants';
 import { overridePaginationStateWithQueryParams } from 'app/shared/util/entity-utils';
 import { useAppDispatch, useAppSelector } from 'app/config/store';
+import { getUsers } from 'app/modules/administration/user-management/user-management.reducer';
 
 import { getEntities } from './loan.reducer';
 
@@ -24,6 +25,7 @@ export const Loan = () => {
   const loanList = useAppSelector(state => state.loan.entities);
   const loading = useAppSelector(state => state.loan.loading);
   const totalItems = useAppSelector(state => state.loan.totalItems);
+  const users = useAppSelector(state => state.userManagement.users);
 
   const getAllEntities = () => {
     dispatch(
@@ -41,6 +43,16 @@ export const Loan = () => {
     if (pageLocation.search !== endURL) {
       navigate(`${pageLocation.pathname}${endURL}`);
     }
+  };
+
+  useEffect(() => {
+    const params = { page: 0, size: 10, sort: 'id,asc' }; // Pasar valores predeterminados
+    dispatch(getUsers(params)); // Cargar la lista de usuarios al montar el componente
+  }, [dispatch]);
+
+  const getUserLogin = userId => {
+    const user = users.find(u => u.id === userId);
+    return user ? user.login : 'N/A';
   };
 
   useEffect(() => {
@@ -109,90 +121,90 @@ export const Loan = () => {
         {loanList && loanList.length > 0 ? (
           <Table responsive>
             <thead>
-              <tr>
-                <th className="hand" onClick={sort('id')}>
-                  <Translate contentKey="jhipsterSampleApplicationApp.prestamos.id">ID</Translate>{' '}
-                  <FontAwesomeIcon icon={getSortIconByFieldName('id')} />
-                </th>
-                <th className="hand" onClick={sort('requestedAmount')}>
-                  <Translate contentKey="jhipsterSampleApplicationApp.prestamos.requestedAmount">Requested Amount</Translate>{' '}
-                  <FontAwesomeIcon icon={getSortIconByFieldName('requestedAmount')} />
-                </th>
-                <th className="hand" onClick={sort('interestRate')}>
-                  <Translate contentKey="jhipsterSampleApplicationApp.prestamos.interestRate">Interest Rate</Translate>{' '}
-                  <FontAwesomeIcon icon={getSortIconByFieldName('interestRate')} />
-                </th>
-                <th className="hand" onClick={sort('paymentTermMonths')}>
-                  <Translate contentKey="jhipsterSampleApplicationApp.prestamos.paymentTermMonths">Payment Term Months</Translate>{' '}
-                  <FontAwesomeIcon icon={getSortIconByFieldName('paymentTermMonths')} />
-                </th>
-                <th className="hand" onClick={sort('applicationDate')}>
-                  <Translate contentKey="jhipsterSampleApplicationApp.prestamos.applicationDate">Application Date</Translate>{' '}
-                  <FontAwesomeIcon icon={getSortIconByFieldName('applicationDate')} />
-                </th>
-                <th className="hand" onClick={sort('status')}>
-                  <Translate contentKey="jhipsterSampleApplicationApp.prestamos.status">Status</Translate>{' '}
-                  <FontAwesomeIcon icon={getSortIconByFieldName('status')} />
-                </th>
-                <th>
-                  <Translate contentKey="jhipsterSampleApplicationApp.prestamos.user">User</Translate> <FontAwesomeIcon icon="sort" />
-                </th>
-                <th />
-              </tr>
+            <tr>
+              <th className="hand" onClick={sort('id')}>
+                <Translate contentKey="jhipsterSampleApplicationApp.prestamos.id">ID</Translate>{' '}
+                <FontAwesomeIcon icon={getSortIconByFieldName('id')} />
+              </th>
+              <th className="hand" onClick={sort('requestedAmount')}>
+                <Translate contentKey="jhipsterSampleApplicationApp.prestamos.requestedAmount">Requested Amount</Translate>{' '}
+                <FontAwesomeIcon icon={getSortIconByFieldName('requestedAmount')} />
+              </th>
+              <th className="hand" onClick={sort('interestRate')}>
+                <Translate contentKey="jhipsterSampleApplicationApp.prestamos.interestRate">Interest Rate</Translate>{' '}
+                <FontAwesomeIcon icon={getSortIconByFieldName('interestRate')} />
+              </th>
+              <th className="hand" onClick={sort('paymentTermMonths')}>
+                <Translate contentKey="jhipsterSampleApplicationApp.prestamos.paymentTermMonths">Payment Term Months</Translate>{' '}
+                <FontAwesomeIcon icon={getSortIconByFieldName('paymentTermMonths')} />
+              </th>
+              <th className="hand" onClick={sort('applicationDate')}>
+                <Translate contentKey="jhipsterSampleApplicationApp.prestamos.applicationDate">Application Date</Translate>{' '}
+                <FontAwesomeIcon icon={getSortIconByFieldName('applicationDate')} />
+              </th>
+              <th className="hand" onClick={sort('status')}>
+                <Translate contentKey="jhipsterSampleApplicationApp.prestamos.status">Status</Translate>{' '}
+                <FontAwesomeIcon icon={getSortIconByFieldName('status')} />
+              </th>
+              <th>
+                <Translate contentKey="jhipsterSampleApplicationApp.prestamos.user">User</Translate> <FontAwesomeIcon icon="sort" />
+              </th>
+              <th />
+            </tr>
             </thead>
             <tbody>
-              {loanList.map((loan, i) => (
-                <tr key={`entity-${i}`} data-cy="entityTable">
-                  <td>
-                    <Button tag={Link} to={`/loan/${loan.id}`} color="link" size="sm">
-                      {loan.id}
-                    </Button>
-                  </td>
-                  <td>{loan.requestedAmount}</td>
-                  <td>{loan.interestRate}</td>
-                  <td>{loan.paymentTermMonths}</td>
-                  <td>
-                    {loan.applicationDate ? <TextFormat type="date" value={loan.applicationDate} format={APP_LOCAL_DATE_FORMAT} /> : null}
-                  </td>
-                  <td>{loan.status}</td>
-                  <td>{loan.user ? loan.user.id : ''}</td>
-                  <td className="text-end">
-                    <div className="btn-group flex-btn-group-container">
-                      <Button tag={Link} to={`/loan/${loan.id}`} color="info" size="sm" data-cy="entityDetailsButton">
-                        <FontAwesomeIcon icon="eye" />{' '}
-                        <span className="d-none d-md-inline">
+            {loanList.map((loan, i) => (
+              <tr key={`entity-${i}`} data-cy="entityTable">
+                <td>
+                  <Button tag={Link} to={`/loan/${loan.id}`} color="link" size="sm">
+                    {loan.id}
+                  </Button>
+                </td>
+                <td>{loan.requestedAmount}</td>
+                <td>{loan.interestRate}</td>
+                <td>{loan.paymentTermMonths}</td>
+                <td>
+                  {loan.applicationDate ? <TextFormat type="date" value={loan.applicationDate} format={APP_LOCAL_DATE_FORMAT} /> : null}
+                </td>
+                <td>{loan.status}</td>
+                <td>{loan.user ? getUserLogin(loan.user.id) : 'N/A'}</td>
+                <td className="text-end">
+                <div className="btn-group flex-btn-group-container">
+                    <Button tag={Link} to={`/loan/${loan.id}`} color="info" size="sm" data-cy="entityDetailsButton">
+                      <FontAwesomeIcon icon="eye" />{' '}
+                      <span className="d-none d-md-inline">
                           <Translate contentKey="entity.action.view">View</Translate>
                         </span>
-                      </Button>
-                      <Button
-                        tag={Link}
-                        to={`/loan/${loan.id}/edit?page=${paginationState.activePage}&sort=${paginationState.sort},${paginationState.order}`}
-                        color="primary"
-                        size="sm"
-                        data-cy="entityEditButton"
-                      >
-                        <FontAwesomeIcon icon="pencil-alt" />{' '}
-                        <span className="d-none d-md-inline">
+                    </Button>
+                    <Button
+                      tag={Link}
+                      to={`/loan/${loan.id}/edit?page=${paginationState.activePage}&sort=${paginationState.sort},${paginationState.order}`}
+                      color="primary"
+                      size="sm"
+                      data-cy="entityEditButton"
+                    >
+                      <FontAwesomeIcon icon="pencil-alt" />{' '}
+                      <span className="d-none d-md-inline">
                           <Translate contentKey="entity.action.edit">Edit</Translate>
                         </span>
-                      </Button>
-                      <Button
-                        onClick={() =>
-                          (window.location.href = `/loan/${loan.id}/delete?page=${paginationState.activePage}&sort=${paginationState.sort},${paginationState.order}`)
-                        }
-                        color="danger"
-                        size="sm"
-                        data-cy="entityDeleteButton"
-                      >
-                        <FontAwesomeIcon icon="trash" />{' '}
-                        <span className="d-none d-md-inline">
+                    </Button>
+                    <Button
+                      onClick={() =>
+                        (window.location.href = `/loan/${loan.id}/delete?page=${paginationState.activePage}&sort=${paginationState.sort},${paginationState.order}`)
+                      }
+                      color="danger"
+                      size="sm"
+                      data-cy="entityDeleteButton"
+                    >
+                      <FontAwesomeIcon icon="trash" />{' '}
+                      <span className="d-none d-md-inline">
                           <Translate contentKey="entity.action.delete">Delete</Translate>
                         </span>
-                      </Button>
-                    </div>
-                  </td>
-                </tr>
-              ))}
+                    </Button>
+                  </div>
+                </td>
+              </tr>
+            ))}
             </tbody>
           </Table>
         ) : (

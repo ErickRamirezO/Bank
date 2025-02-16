@@ -8,9 +8,9 @@
       "entities": {
         "main": "Entidades",
         "jhipster-needle-menu-add-entry": "JHipster will add additional entities here (do not translate!)",
-        "payment": "Realizar pago",
+        "amortization": "Amortizaciones",
         "loan": "Préstamos",
-        "userData": "Usuarios"
+        "userData": "Datos de Usuarios"
       },
       "account": {
         "main": "Cuenta",
@@ -145,5 +145,5 @@
       "not.image": "Se esperaba que el fichero fuera una imagen pero se encontro \"{{ fileType }}\""
     }
   },
-  "footer": "Pie de página"
+  "footer": "Copyright © 2025"
 }

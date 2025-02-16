@@ -7,8 +7,6 @@ import java.math.BigDecimal;
 import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
-
 /**
  * A UserData.
  */

@@ -23,7 +23,7 @@ export const LoanDetail = () => {
     <Row>
       <Col md="8">
         <h2 data-cy="loanDetailsHeading">
-          <Translate contentKey="jhipsterSampleApplicationApp.loan.detail.title">Loan</Translate>
+          <Translate contentKey="jhipsterSampleApplicationApp.prestamos.detail.title">Loan</Translate>
         </h2>
         <dl className="jh-entity-details">
           <dt>
@@ -34,19 +34,19 @@ export const LoanDetail = () => {
           <dd>{loanEntity.id}</dd>
           <dt>
             <span id="requestedAmount">
-              <Translate contentKey="jhipsterSampleApplicationApp.loan.requestedAmount">Requested Amount</Translate>
+              <Translate contentKey="jhipsterSampleApplicationApp.prestamos.requestedAmount">Requested Amount</Translate>
             </span>
           </dt>
           <dd>{loanEntity.requestedAmount}</dd>
           <dt>
             <span id="interestRate">
-              <Translate contentKey="jhipsterSampleApplicationApp.loan.interestRate">Interest Rate</Translate>
+              <Translate contentKey="jhipsterSampleApplicationApp.prestamos.interestRate">Interest Rate</Translate>
             </span>
           </dt>
           <dd>{loanEntity.interestRate}</dd>
           <dt>
             <span id="paymentTermMonths">
-              <Translate contentKey="jhipsterSampleApplicationApp.loan.paymentTermMonths">Payment Term Months</Translate>
+              <Translate contentKey="jhipsterSampleApplicationApp.prestamos.paymentTermMonths">Payment Term Months</Translate>
             </span>
           </dt>
           <dd>{loanEntity.paymentTermMonths}</dd>
@@ -62,12 +62,12 @@ export const LoanDetail = () => {
           </dd>
           <dt>
             <span id="status">
-              <Translate contentKey="jhipsterSampleApplicationApp.loan.status">Status</Translate>
+              <Translate contentKey="jhipsterSampleApplicationApp.prestamos.status">Status</Translate>
             </span>
           </dt>
           <dd>{loanEntity.status}</dd>
           <dt>
-            <Translate contentKey="jhipsterSampleApplicationApp.loan.user">User</Translate>
+            <Translate contentKey="jhipsterSampleApplicationApp.prestamos.user">User</Translate>
           </dt>
           <dd>{loanEntity.user ? loanEntity.user.id : ''}</dd>
         </dl>

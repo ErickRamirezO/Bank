@@ -1,6 +1,6 @@
 {
   "jhipsterSampleApplicationApp": {
-    "loan": {
+    "prestamos": {
       "home": {
         "title": "Loans",
         "refreshListLabel": "Refresh list",

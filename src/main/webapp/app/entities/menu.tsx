@@ -7,7 +7,7 @@ const EntitiesMenu = () => {
     <>
       {/* prettier-ignore */}
       <MenuItem icon="asterisk" to="/amortization">
-        <Translate contentKey="global.menu.entities.payment" />
+        <Translate contentKey="global.menu.entities.amortization" />
       </MenuItem>
       <MenuItem icon="asterisk" to="/loan">
         <Translate contentKey="global.menu.entities.loan" />

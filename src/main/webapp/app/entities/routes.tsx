@@ -2,12 +2,10 @@ import React from 'react';
 
 import ErrorBoundaryRoutes from 'app/shared/error/error-boundary-routes';
 
-import Alert from './alert';
+import { Route } from 'react-router';
 import Amortization from './amortization';
 import Loan from './loan';
-import Log from './log';
 import UserData from './user-data';
-import { Route } from 'react-router';
 /* jhipster-needle-add-route-import - JHipster will add routes here */
 
 export default () => {

@@ -862,9 +862,9 @@
             </activation>
             <properties>
                 <!-- default Spring profiles -->
-                <liquibase-plugin.password/>
-                <liquibase-plugin.url>jdbc:postgresql://localhost:5432/jhipsterSampleApplication</liquibase-plugin.url>
-                <liquibase-plugin.username>jhipsterSampleApplication</liquibase-plugin.username>
+                <liquibase-plugin.url>jdbc:postgresql://localhost:5432/bank</liquibase-plugin.url>
+                <liquibase-plugin.username>postgres</liquibase-plugin.username>
+              <liquibase-plugin.password>root</liquibase-plugin.password>
                 <profile.test>test,testdev</profile.test>
                 <spring.profiles.active>dev${profile.tls}${profile.no-liquibase}</spring.profiles.active>
             </properties>
@@ -993,8 +993,8 @@
             <properties>
                 <!-- default Spring profiles -->
                 <liquibase-plugin.password/>
-                <liquibase-plugin.url>jdbc:postgresql://localhost:5432/jhipsterSampleApplication</liquibase-plugin.url>
-                <liquibase-plugin.username>jhipsterSampleApplication</liquibase-plugin.username>
+                <liquibase-plugin.url>jdbc:postgresql://localhost:5432/bank</liquibase-plugin.url>
+                <liquibase-plugin.username>postgres</liquibase-plugin.username>
                 <profile.test>test,testprod</profile.test>
                 <spring.profiles.active>prod${profile.api-docs}${profile.tls}${profile.e2e}${profile.no-liquibase}</spring.profiles.active>
             </properties>

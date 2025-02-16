@@ -2,30 +2,30 @@
   "jhipsterSampleApplicationApp": {
     "userData": {
       "home": {
-        "title": "User Data",
+        "title": "Datos de usuarios",
         "refreshListLabel": "Refrescar lista",
-        "createLabel": "Crear nuevo User Data",
-        "createOrEditLabel": "Crear o editar User Data",
-        "notFound": "Ningún User Data encontrado"
+        "createLabel": "Crear nuevos datos",
+        "createOrEditLabel": "Crear o editar datos de usuario",
+        "notFound": "Ningún dato de usuario encontrado"
       },
-      "created": "Un nuevo User Data ha sido creado con el identificador {{ param }}",
-      "updated": "Un User Data ha sido actualizado con el identificador {{ param }}",
-      "deleted": "Un User Data ha sido eliminado con el identificador {{ param }}",
+      "created": "Nuevos datos de usuarios ha sido creado con el identificador {{ param }}",
+      "updated": "Nuevos datos de usuarios  ha sido actualizado con el identificador {{ param }}",
+      "deleted": "Nuevos datos de usuarios  ha sido eliminado con el identificador {{ param }}",
       "delete": {
-        "question": "¿Seguro que quiere eliminar User Data {{ id }}?"
+        "question": "¿Seguro que quiere eliminar los datos de usuario {{ id }}?"
       },
       "detail": {
-        "title": "User Data"
+        "title": "Datos de usuario"
       },
       "id": "ID",
-      "salary": "Salary",
-      "familyLoad": "Family Load",
-      "workplace": "Workplace",
-      "housingType": "Housing Type",
-      "rentCost": "Rent Cost",
-      "yearsOfEmployment": "Years Of Employment",
-      "employmentStatus": "Employment Status",
-      "user": "User"
+      "salary": "Salario",
+      "familyLoad": "Carga Familiar",
+      "workplace": "Lugar de trabajo",
+      "housingType": "Tipo de vivienda",
+      "rentCost": "Costo de alquiler",
+      "yearsOfEmployment": "Años de empleo",
+      "employmentStatus": "Estado de empleo",
+      "user": "Usuario"
     }
   }
 }
