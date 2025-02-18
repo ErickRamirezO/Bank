@@ -154,6 +154,7 @@ spring:
     problemdetails:
       enabled: true
   security:
+    contentSecurityPolicy: "default-src 'self'; script-src 'self' 'unsafe-inline' https://apis.google.com; style-src 'self' 'unsafe-inline'; img-src 'self' data:; font-src 'self'; frame-ancestors 'none';"
     oauth2:
       resourceserver:
         jwt:
