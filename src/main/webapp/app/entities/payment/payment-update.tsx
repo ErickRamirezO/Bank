@@ -5,16 +5,17 @@ import { Translate, ValidatedField, ValidatedForm, isNumber, translate } from 'r
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { hasAnyAuthority } from 'app/shared/auth/private-route';
 import { AUTHORITIES } from 'app/config/constants';
-import { createEntity as createAmortization } from '../amortization/amortization.reducer';
-import dayjs from 'dayjs';
-import { useAppDispatch, useAppSelector } from 'app/config/store';
-import { toast } from 'react-toastify';
-import { getUsers } from 'app/modules/administration/user-management/user-management.reducer';
-import { createEntity, getEntity, reset, updateEntity } from './loan.reducer';
 
-export const LoanUpdate = () => {
+import { useAppDispatch, useAppSelector } from 'app/config/store';
+
+import { getUsers } from 'app/modules/administration/user-management/user-management.reducer';
+import { createEntity, getEntity, reset, updateEntity } from '../loan/loan.reducer';
+
+export const PaymentUpdate = () => {
   const dispatch = useAppDispatch();
+
   const navigate = useNavigate();
+
   const { id } = useParams<'id'>();
   const isNew = id === undefined;
 
@@ -23,7 +24,9 @@ export const LoanUpdate = () => {
   const loading = useAppSelector(state => state.loan.loading);
   const updating = useAppSelector(state => state.loan.updating);
   const updateSuccess = useAppSelector(state => state.loan.updateSuccess);
-  const currentUser = useAppSelector(state => state.authentication.account);
+  const currentUserIsAdmin = useAppSelector(state =>
+    hasAnyAuthority(state.authentication.account.authorities, [AUTHORITIES.ADMIN])
+  );
 
   const handleClose = () => {
     navigate(`/loan${location.search}`);
@@ -62,27 +65,15 @@ export const LoanUpdate = () => {
     const entity = {
       ...loanEntity,
       ...values,
-      user: currentUser,
-      status: values.status || 0,
+      user: users.find(it => it.id.toString() === values.user?.toString()),
     };
 
+    if (!currentUserIsAdmin) {
+      entity.status = loanEntity.status; // Mantiene el estado actual sin cambios
+    }
+
     if (isNew) {
-      dispatch(createEntity(entity)).unwrap().then(response => {
-        const responseStr = JSON.stringify(response);
-        const loanId = JSON.parse(responseStr).data.id;
-        if (loanId) {
-          const amortization = {
-            installmentNumber: 1,
-            dueDate: dayjs().add(1, 'month'),
-            remainingBalance: values.requestedAmount,
-            principal: values.requestedAmount,
-            paymentAmount: values.requestedAmount + (values.requestedAmount * values.interestRate / 100),
-            penaltyInterest: 0,
-            loan: { id: loanId },
-          };
-          dispatch(createAmortization(amortization));
-        }
-      });
+      dispatch(createEntity(entity));
     } else {
       dispatch(updateEntity(entity));
     }
@@ -100,8 +91,8 @@ export const LoanUpdate = () => {
     <div>
       <Row className="justify-content-center">
         <Col md="8">
-          <h2 id="jhipsterSampleApplicationApp.prestamos.home.createOrEditLabel" data-cy="LoanCreateUpdateHeading">
-            <Translate contentKey="jhipsterSampleApplicationApp.prestamos.home.createOrEditLabel">Create or edit a Loan</Translate>
+          <h2 id="jhipsterSampleApplicationApp.pagos.home.createOrEditLabel" data-cy="LoanCreateUpdateHeading">
+            <Translate contentKey="jhipsterSampleApplicationApp.pagos.home.createOrEditLabel">Create or edit a Loan</Translate>
           </h2>
         </Col>
       </Row>
@@ -122,8 +113,8 @@ export const LoanUpdate = () => {
                 />
               ) : null}
               <ValidatedField
+                label={translate('jhipsterSampleApplicationApp.pagos.requestedAmount')}
                 id="loan-requestedAmount"
-                label={translate('jhipsterSampleApplicationApp.prestamos.requestedAmount')}
                 name="requestedAmount"
                 data-cy="requestedAmount"
                 type="text"
@@ -133,7 +124,7 @@ export const LoanUpdate = () => {
                 }}
               />
               <ValidatedField
-                label={translate('jhipsterSampleApplicationApp.prestamos.interestRate')}
+                label={translate('jhipsterSampleApplicationApp.pagos.interestRate')}
                 id="loan-interestRate"
                 name="interestRate"
                 data-cy="interestRate"
@@ -144,7 +135,7 @@ export const LoanUpdate = () => {
                 }}
               />
               <ValidatedField
-                label={translate('jhipsterSampleApplicationApp.prestamos.paymentTermMonths')}
+                label={translate('jhipsterSampleApplicationApp.pagos.paymentTermMonths')}
                 id="loan-paymentTermMonths"
                 name="paymentTermMonths"
                 data-cy="paymentTermMonths"
@@ -155,15 +146,45 @@ export const LoanUpdate = () => {
                 }}
               />
               <ValidatedField
-                label={translate('jhipsterSampleApplicationApp.prestamos.applicationDate')}
+                label={translate('jhipsterSampleApplicationApp.pagos.applicationDate')}
                 id="loan-applicationDate"
                 name="applicationDate"
                 data-cy="applicationDate"
                 type="date"
-                defaultValue={new Date().toISOString().split('T')[0]}
-                readOnly
               />
-              <input type="hidden" name="user" value={currentUser.id} />
+              {currentUserIsAdmin ? (
+                <ValidatedField
+                  label={translate('jhipsterSampleApplicationApp.pagos.status')}
+                  id="loan-status"
+                  name="status"
+                  data-cy="status"
+                  type="select"
+                >
+                  <option value="0">Pendiente</option>
+                  <option value="1">Aprobado</option>
+                  <option value="2">Rechazado</option>
+                  <option value="3">Pagado</option>
+                  <option value="4">En mora</option>
+                </ValidatedField>
+              ) : (
+                <input type="hidden" name="status" value={defaultValues().status} />
+              )}
+              <ValidatedField
+                id="loan-user"
+                name="user"
+                data-cy="user"
+                label={translate('jhipsterSampleApplicationApp.pagos.user')}
+                type="select"
+              >
+                <option value="" key="0" />
+                {users
+                  ? users.map(otherEntity => (
+                    <option value={otherEntity.id} key={otherEntity.id}>
+                      {otherEntity.login}
+                    </option>
+                  ))
+                  : null}
+              </ValidatedField>
               <Button tag={Link} id="cancel-save" data-cy="entityCreateCancelButton" to="/loan" replace color="info">
                 <FontAwesomeIcon icon="arrow-left" />
                 &nbsp;
@@ -185,4 +206,4 @@ export const LoanUpdate = () => {
   );
 };
 
-export default LoanUpdate;
+export default PaymentUpdate;

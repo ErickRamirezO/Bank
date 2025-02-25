@@ -5,6 +5,9 @@ import jakarta.validation.constraints.*;
 import java.io.Serializable;
 import java.math.BigDecimal;
 import java.time.LocalDate;
+import java.util.HashSet;
+import java.util.Set;
+
 import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
 
@@ -46,6 +49,8 @@ public class Loan implements Serializable {
 
     @ManyToOne(fetch = FetchType.LAZY)
     private User user;
+    @OneToMany(mappedBy = "loan", cascade = CascadeType.ALL, orphanRemoval = true)
+    private Set<Amortization> amortizations = new HashSet<>();
 
     // jhipster-needle-entity-add-field - JHipster will add fields here
 

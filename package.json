@@ -92,6 +92,7 @@
     "@fortawesome/react-fontawesome": "0.2.2",
     "@reduxjs/toolkit": "2.5.0",
     "axios": "1.7.9",
+    "Bank": "file:",
     "bootstrap": "5.3.3",
     "dayjs": "1.11.13",
     "jhipster-sample-application": "file:",

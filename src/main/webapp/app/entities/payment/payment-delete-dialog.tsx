@@ -5,9 +5,9 @@ import { Translate } from 'react-jhipster';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 
 import { useAppDispatch, useAppSelector } from 'app/config/store';
-import { deleteEntity, getEntity } from './loan.reducer';
+import { deleteEntity, getEntity } from '../loan//loan.reducer';
 
-export const LoanDeleteDialog = () => {
+export const PaymentDeleteDialog = () => {
   const dispatch = useAppDispatch();
 
   const pageLocation = useLocation();
@@ -65,4 +65,4 @@ export const LoanDeleteDialog = () => {
   );
 };
 
-export default LoanDeleteDialog;
+export default PaymentDeleteDialog;

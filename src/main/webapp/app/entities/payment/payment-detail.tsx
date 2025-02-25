@@ -7,9 +7,9 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { APP_LOCAL_DATE_FORMAT } from 'app/config/constants';
 import { useAppDispatch, useAppSelector } from 'app/config/store';
 
-import { getEntity } from './loan.reducer';
+import { getEntity } from '../loan/loan.reducer';
 
-export const LoanDetail = () => {
+export const PaymentDetail = () => {
   const dispatch = useAppDispatch();
 
   const { id } = useParams<'id'>();
@@ -23,7 +23,7 @@ export const LoanDetail = () => {
     <Row>
       <Col md="8">
         <h2 data-cy="loanDetailsHeading">
-          <Translate contentKey="jhipsterSampleApplicationApp.prestamos.detail.title">Loan</Translate>
+          <Translate contentKey="jhipsterSampleApplicationApp.pagos.detail.title">Loan</Translate>
         </h2>
         <dl className="jh-entity-details">
           <dt>
@@ -34,25 +34,25 @@ export const LoanDetail = () => {
           <dd>{loanEntity.id}</dd>
           <dt>
             <span id="requestedAmount">
-              <Translate contentKey="jhipsterSampleApplicationApp.prestamos.requestedAmount">Requested Amount</Translate>
+              <Translate contentKey="jhipsterSampleApplicationApp.pagos.requestedAmount">Requested Amount</Translate>
             </span>
           </dt>
           <dd>{loanEntity.requestedAmount}</dd>
           <dt>
             <span id="interestRate">
-              <Translate contentKey="jhipsterSampleApplicationApp.prestamos.interestRate">Interest Rate</Translate>
+              <Translate contentKey="jhipsterSampleApplicationApp.pagos.interestRate">Interest Rate</Translate>
             </span>
           </dt>
           <dd>{loanEntity.interestRate}</dd>
           <dt>
             <span id="paymentTermMonths">
-              <Translate contentKey="jhipsterSampleApplicationApp.prestamos.paymentTermMonths">Payment Term Months</Translate>
+              <Translate contentKey="jhipsterSampleApplicationApp.pagos.paymentTermMonths">Payment Term Months</Translate>
             </span>
           </dt>
           <dd>{loanEntity.paymentTermMonths}</dd>
           <dt>
             <span id="applicationDate">
-              <Translate contentKey="jhipsterSampleApplicationApp.prestamos.applicationDate">Application Date</Translate>
+              <Translate contentKey="jhipsterSampleApplicationApp.loan.applicationDate">Application Date</Translate>
             </span>
           </dt>
           <dd>
@@ -62,12 +62,12 @@ export const LoanDetail = () => {
           </dd>
           <dt>
             <span id="status">
-              <Translate contentKey="jhipsterSampleApplicationApp.prestamos.status">Status</Translate>
+              <Translate contentKey="jhipsterSampleApplicationApp.pagos.status">Status</Translate>
             </span>
           </dt>
           <dd>{loanEntity.status}</dd>
           <dt>
-            <Translate contentKey="jhipsterSampleApplicationApp.prestamos.user">User</Translate>
+            <Translate contentKey="jhipsterSampleApplicationApp.pagos.user">User</Translate>
           </dt>
           <dd>{loanEntity.user ? loanEntity.user.id : ''}</dd>
         </dl>
@@ -89,4 +89,4 @@ export const LoanDetail = () => {
   );
 };
 
-export default LoanDetail;
+export default PaymentDetail;

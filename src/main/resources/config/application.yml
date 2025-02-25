@@ -154,7 +154,7 @@ spring:
     problemdetails:
       enabled: true
   security:
-    contentSecurityPolicy: "default-src 'self'; script-src 'self' 'unsafe-inline' https://apis.google.com; style-src 'self' 'unsafe-inline'; img-src 'self' data:; font-src 'self'; frame-ancestors 'none';"
+    contentSecurityPolicy: "default-src 'self'; script-src 'self' https://apis.google.com 'nonce-XYZ123'; style-src 'self' https://fonts.googleapis.com 'nonce-XYZ123'; img-src 'self' data:; font-src 'self' https://fonts.gstatic.com; frame-ancestors 'none';"
     oauth2:
       resourceserver:
         jwt:
@@ -178,6 +178,10 @@ spring:
       console-available: true
 
 server:
+  error:
+    include-message: never
+    include-stacktrace: never
+    include-exception: false
   servlet:
     session:
       cookie:

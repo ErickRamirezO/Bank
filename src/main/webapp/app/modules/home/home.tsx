@@ -31,6 +31,9 @@ export const Home = () => {
                 <Button color="primary" tag={Link} to="/loan" className="me-3 btn-lg">
                   <Translate contentKey="home.loan">Hacer un préstamo</Translate>
                 </Button>
+                <Button color="warning" tag={Link} to="/payment" className="me-3 btn-lg">
+                  <Translate contentKey="home.payment">Realizar un pago</Translate>
+                </Button>
                 <Button color="success" tag={Link} to="/amortization" className="btn-lg">
                   <Translate contentKey="home.amortization">Amortizaciones</Translate>
                 </Button>
