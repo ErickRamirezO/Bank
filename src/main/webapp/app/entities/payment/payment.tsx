@@ -4,21 +4,18 @@ import { Button, Table } from 'reactstrap';
 import { JhiItemCount, JhiPagination, TextFormat, Translate, getPaginationState } from 'react-jhipster';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faSort, faSortDown, faSortUp } from '@fortawesome/free-solid-svg-icons';
-import {APP_LOCAL_DATE_FORMAT, AUTHORITIES} from 'app/config/constants';
+import { APP_LOCAL_DATE_FORMAT, AUTHORITIES } from 'app/config/constants';
 import { ASC, DESC, ITEMS_PER_PAGE, SORT } from 'app/shared/util/pagination.constants';
 import { overridePaginationStateWithQueryParams } from 'app/shared/util/entity-utils';
 import { useAppDispatch, useAppSelector } from 'app/config/store';
 import { getUsers } from 'app/modules/administration/user-management/user-management.reducer';
-
 import { getEntities } from '../loan/loan.reducer';
-import {hasAnyAuthority} from "app/shared/auth/private-route";
+import { hasAnyAuthority } from 'app/shared/auth/private-route';
 
 export const Payment = () => {
   const dispatch = useAppDispatch();
-
-  const pageLocation = useLocation();
   const navigate = useNavigate();
-
+  const pageLocation = useLocation();
   const [paginationState, setPaginationState] = useState(
     overridePaginationStateWithQueryParams(getPaginationState(pageLocation, ITEMS_PER_PAGE, 'id'), pageLocation.search),
   );
@@ -26,11 +23,7 @@ export const Payment = () => {
   const loanList = useAppSelector(state => state.loan.entities);
   const loading = useAppSelector(state => state.loan.loading);
   const totalItems = useAppSelector(state => state.loan.totalItems);
-  const users = useAppSelector(state => state.userManagement.users);
   const currentUserId = useAppSelector(state => state.authentication.account.id);
-  const currentUserIsAdmin = useAppSelector(state =>
-    hasAnyAuthority(state.authentication.account.authorities, [AUTHORITIES.ADMIN])
-  );
 
   const getAllEntities = () => {
     dispatch(
@@ -51,16 +44,6 @@ export const Payment = () => {
   };
 
   useEffect(() => {
-    const params = { page: 0, size: 10, sort: 'id,asc' }; // Pasar valores predeterminados
-    dispatch(getUsers(params)); // Cargar la lista de usuarios al montar el componente
-  }, [dispatch]);
-
-  const getUserLogin = userId => {
-    const user = users.find(u => u.id === userId);
-    return user ? user.login : 'N/A';
-  };
-
-  useEffect(() => {
     sortEntities();
   }, [paginationState.activePage, paginationState.order, paginationState.sort]);
 
@@ -74,7 +57,6 @@ export const Payment = () => {
         ...paginationState,
         activePage: +page,
         sort: sortSplit[0],
-        order: sortSplit[1],
       });
     }
   }, [pageLocation.search]);
@@ -106,7 +88,7 @@ export const Payment = () => {
     return order === ASC ? faSortUp : faSortDown;
   };
 
-  const transformStatus = (status) => {
+  const transformStatus = status => {
     switch (status) {
       case 0:
         return 'Pendiente';
@@ -123,9 +105,7 @@ export const Payment = () => {
     }
   };
 
-  const filteredLoanList = currentUserIsAdmin
-    ? loanList
-    : loanList.filter((loan) => loan.user?.id === currentUserId);
+  const filteredLoanList = loanList.filter(loan => loan.user?.id === currentUserId);
 
   return (
     <div>
@@ -134,17 +114,17 @@ export const Payment = () => {
         <div className="d-flex justify-content-end">
           <Button className="me-2" color="info" onClick={handleSyncList} disabled={loading}>
             <FontAwesomeIcon icon="sync" spin={loading} />{' '}
-            <Translate contentKey="jhipsterSampleApplicationApp.pagos.home.refreshListLabel">Refresh List</Translate>
+            <Translate contentKey="jhipsterSampleApplicationApp.pagos.home.refreshListLabel">Actualizar lista</Translate>
           </Button>
           <Link to="/loan/new" className="btn btn-primary jh-create-entity" id="jh-create-entity" data-cy="entityCreateButton">
             <FontAwesomeIcon icon="plus" />
             &nbsp;
-            <Translate contentKey="jhipsterSampleApplicationApp.pagos.home.createLabel">Create new Loan</Translate>
+            <Translate contentKey="jhipsterSampleApplicationApp.pagos.home.createLabel">Crear nuevo Préstamo</Translate>
           </Link>
         </div>
       </h2>
       <div className="table-responsive">
-        {filteredLoanList  && filteredLoanList .length > 0 ? (
+        {filteredLoanList && filteredLoanList.length > 0 ? (
           <Table responsive>
             <thead>
             <tr>
@@ -153,27 +133,27 @@ export const Payment = () => {
                 <FontAwesomeIcon icon={getSortIconByFieldName('id')} />
               </th>
               <th className="hand" onClick={sort('requestedAmount')}>
-                <Translate contentKey="jhipsterSampleApplicationApp.pagos.requestedAmount">Requested Amount</Translate>{' '}
+                <Translate contentKey="jhipsterSampleApplicationApp.pagos.requestedAmount">Monto Solicitado</Translate>{' '}
                 <FontAwesomeIcon icon={getSortIconByFieldName('requestedAmount')} />
               </th>
               <th className="hand" onClick={sort('interestRate')}>
-                <Translate contentKey="jhipsterSampleApplicationApp.pagos.interestRate">Interest Rate</Translate>{' '}
+                <Translate contentKey="jhipsterSampleApplicationApp.pagos.interestRate">Tasa de Interés</Translate>{' '}
                 <FontAwesomeIcon icon={getSortIconByFieldName('interestRate')} />
               </th>
               <th className="hand" onClick={sort('paymentTermMonths')}>
-                <Translate contentKey="jhipsterSampleApplicationApp.pagos.paymentTermMonths">Payment Term Months</Translate>{' '}
+                <Translate contentKey="jhipsterSampleApplicationApp.pagos.paymentTermMonths">Plazo de Pago (Meses)</Translate>{' '}
                 <FontAwesomeIcon icon={getSortIconByFieldName('paymentTermMonths')} />
               </th>
               <th className="hand" onClick={sort('applicationDate')}>
-                <Translate contentKey="jhipsterSampleApplicationApp.pagos.applicationDate">Application Date</Translate>{' '}
+                <Translate contentKey="jhipsterSampleApplicationApp.pagos.applicationDate">Fecha de Solicitud</Translate>{' '}
                 <FontAwesomeIcon icon={getSortIconByFieldName('applicationDate')} />
               </th>
               <th className="hand" onClick={sort('status')}>
-                <Translate contentKey="jhipsterSampleApplicationApp.pagos.status">Status</Translate>{' '}
+                <Translate contentKey="jhipsterSampleApplicationApp.pagos.status">Estado</Translate>{' '}
                 <FontAwesomeIcon icon={getSortIconByFieldName('status')} />
               </th>
               <th>
-                <Translate contentKey="jhipsterSampleApplicationApp.pagos.user">User</Translate> <FontAwesomeIcon icon="sort" />
+                <Translate contentKey="jhipsterSampleApplicationApp.pagos.user">Usuario</Translate> <FontAwesomeIcon icon="sort" />
               </th>
               <th />
             </tr>
@@ -193,38 +173,13 @@ export const Payment = () => {
                   {loan.applicationDate ? <TextFormat type="date" value={loan.applicationDate} format={APP_LOCAL_DATE_FORMAT} /> : null}
                 </td>
                 <td>{transformStatus(loan.status)}</td>
-                <td>{loan.user ? getUserLogin(loan.user.id) : 'N/A'}</td>
+                <td>{loan.user ? loan.user.login : 'N/A'}</td>
                 <td className="text-end">
                   <div className="btn-group flex-btn-group-container">
-                    <Button tag={Link} to={`/loan/${loan.id}`} color="info" size="sm" data-cy="entityDetailsButton">
-                      <FontAwesomeIcon icon="eye" />{' '}
+                    <Button tag={Link} to={`/loan/${loan.id}/pay`} color="primary" size="sm" data-cy="entityPayButton">
+                      <FontAwesomeIcon icon="money-bill" />{' '}
                       <span className="d-none d-md-inline">
-                          <Translate contentKey="entity.action.view">View</Translate>
-                        </span>
-                    </Button>
-                    <Button
-                      tag={Link}
-                      to={`/loan/${loan.id}/edit?page=${paginationState.activePage}&sort=${paginationState.sort},${paginationState.order}`}
-                      color="primary"
-                      size="sm"
-                      data-cy="entityEditButton"
-                    >
-                      <FontAwesomeIcon icon="pencil-alt" />{' '}
-                      <span className="d-none d-md-inline">
-                          <Translate contentKey="entity.action.edit">Edit</Translate>
-                        </span>
-                    </Button>
-                    <Button
-                      onClick={() =>
-                        (window.location.href = `/loan/${loan.id}/delete?page=${paginationState.activePage}&sort=${paginationState.sort},${paginationState.order}`)
-                      }
-                      color="danger"
-                      size="sm"
-                      data-cy="entityDeleteButton"
-                    >
-                      <FontAwesomeIcon icon="trash" />{' '}
-                      <span className="d-none d-md-inline">
-                          <Translate contentKey="entity.action.delete">Delete</Translate>
+                          <Translate contentKey="entity.action.pay">Pagar</Translate>
                         </span>
                     </Button>
                   </div>
@@ -236,7 +191,7 @@ export const Payment = () => {
         ) : (
           !loading && (
             <div className="alert alert-warning">
-              <Translate contentKey="jhipsterSampleApplicationApp.pagos.home.notFound">No Loans found</Translate>
+              <Translate contentKey="jhipsterSampleApplicationApp.pagos.home.notFound">No se encontraron Préstamos</Translate>
             </div>
           )
         )}

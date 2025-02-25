@@ -1,98 +1,57 @@
-import React, { useEffect } from 'react';
-import { Link, useNavigate, useParams } from 'react-router-dom';
-import { Button, Col, Row } from 'reactstrap';
+import React, { useEffect, useState } from 'react';
+import { useParams, useNavigate } from 'react-router-dom';
+import { Button, Col, Row, Table } from 'reactstrap';
 import { Translate, ValidatedField, ValidatedForm, isNumber, translate } from 'react-jhipster';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { hasAnyAuthority } from 'app/shared/auth/private-route';
-import { AUTHORITIES } from 'app/config/constants';
-
 import { useAppDispatch, useAppSelector } from 'app/config/store';
-
-import { getUsers } from 'app/modules/administration/user-management/user-management.reducer';
-import { createEntity, getEntity, reset, updateEntity } from '../loan/loan.reducer';
+import { getEntity as getLoan, updateEntity as updateLoan } from '../loan/loan.reducer';
+import { getEntity as getAmortization, createEntity as createAmortization } from '../amortization/amortization.reducer';
 
 export const PaymentUpdate = () => {
   const dispatch = useAppDispatch();
-
   const navigate = useNavigate();
-
   const { id } = useParams<'id'>();
-  const isNew = id === undefined;
 
-  const users = useAppSelector(state => state.userManagement.users);
   const loanEntity = useAppSelector(state => state.loan.entity);
+  const amortizationList = useAppSelector(state => state.amortization.entities);
   const loading = useAppSelector(state => state.loan.loading);
   const updating = useAppSelector(state => state.loan.updating);
-  const updateSuccess = useAppSelector(state => state.loan.updateSuccess);
-  const currentUserIsAdmin = useAppSelector(state =>
-    hasAnyAuthority(state.authentication.account.authorities, [AUTHORITIES.ADMIN])
-  );
+
+  useEffect(() => {
+    dispatch(getLoan(id));
+    dispatch(getAmortization(id));
+  }, [id]);
 
   const handleClose = () => {
-    navigate(`/loan${location.search}`);
+    navigate('/payment');
   };
 
-  useEffect(() => {
-    if (isNew) {
-      dispatch(reset());
-    } else {
-      dispatch(getEntity(id));
-    }
-
-    dispatch(getUsers({}));
-  }, []);
-
-  useEffect(() => {
-    if (updateSuccess) {
-      handleClose();
-    }
-  }, [updateSuccess]);
-
-  const saveEntity = values => {
-    if (values.id !== undefined && typeof values.id !== 'number') {
-      values.id = Number(values.id);
-    }
-    if (values.requestedAmount !== undefined && typeof values.requestedAmount !== 'number') {
-      values.requestedAmount = Number(values.requestedAmount);
-    }
-    if (values.interestRate !== undefined && typeof values.interestRate !== 'number') {
-      values.interestRate = Number(values.interestRate);
-    }
-    if (values.paymentTermMonths !== undefined && typeof values.paymentTermMonths !== 'number') {
-      values.paymentTermMonths = Number(values.paymentTermMonths);
-    }
-
-    const entity = {
-      ...loanEntity,
+  const savePayment = values => {
+    const amortization = {
       ...values,
-      user: users.find(it => it.id.toString() === values.user?.toString()),
+      loan: { id },
     };
 
-    if (!currentUserIsAdmin) {
-      entity.status = loanEntity.status; // Mantiene el estado actual sin cambios
-    }
-
-    if (isNew) {
-      dispatch(createEntity(entity));
-    } else {
-      dispatch(updateEntity(entity));
-    }
+    dispatch(createAmortization(amortization)).then(() => {
+      const updatedLoan = {
+        ...loanEntity,
+        requestedAmount: loanEntity.requestedAmount - values.paymentAmount,
+      };
+      dispatch(updateLoan(updatedLoan));
+      handleClose();
+    });
   };
 
-  const defaultValues = () =>
-    isNew
-      ? {}
-      : {
-        ...loanEntity,
-        user: loanEntity?.user?.id,
-      };
+  const defaultValues = () => ({
+    paymentAmount: 0,
+  });
 
   return (
     <div>
       <Row className="justify-content-center">
         <Col md="8">
           <h2 id="jhipsterSampleApplicationApp.pagos.home.createOrEditLabel" data-cy="LoanCreateUpdateHeading">
-            <Translate contentKey="jhipsterSampleApplicationApp.pagos.home.createOrEditLabel">Create or edit a Loan</Translate>
+            <Translate contentKey="jhipsterSampleApplicationApp.pagos.home.createOrEditLabel">Pagar Préstamo</Translate>
           </h2>
         </Col>
       </Row>
@@ -101,105 +60,76 @@ export const PaymentUpdate = () => {
           {loading ? (
             <p>Loading...</p>
           ) : (
-            <ValidatedForm defaultValues={defaultValues()} onSubmit={saveEntity}>
-              {!isNew ? (
-                <ValidatedField
-                  name="id"
-                  required
-                  readOnly
-                  id="loan-id"
-                  label={translate('global.field.id')}
-                  validate={{ required: true }}
-                />
-              ) : null}
+            <ValidatedForm defaultValues={defaultValues()} onSubmit={savePayment}>
               <ValidatedField
-                label={translate('jhipsterSampleApplicationApp.pagos.requestedAmount')}
-                id="loan-requestedAmount"
-                name="requestedAmount"
-                data-cy="requestedAmount"
+                label={translate('jhipsterSampleApplicationApp.pagos.paymentAmount')}
+                id="amortization-paymentAmount"
+                name="paymentAmount"
+                data-cy="paymentAmount"
                 type="text"
                 validate={{
                   required: { value: true, message: translate('entity.validation.required') },
                   validate: v => isNumber(v) || translate('entity.validation.number'),
                 }}
               />
-              <ValidatedField
-                label={translate('jhipsterSampleApplicationApp.pagos.interestRate')}
-                id="loan-interestRate"
-                name="interestRate"
-                data-cy="interestRate"
-                type="text"
-                validate={{
-                  required: { value: true, message: translate('entity.validation.required') },
-                  validate: v => isNumber(v) || translate('entity.validation.number'),
-                }}
-              />
-              <ValidatedField
-                label={translate('jhipsterSampleApplicationApp.pagos.paymentTermMonths')}
-                id="loan-paymentTermMonths"
-                name="paymentTermMonths"
-                data-cy="paymentTermMonths"
-                type="text"
-                validate={{
-                  required: { value: true, message: translate('entity.validation.required') },
-                  validate: v => isNumber(v) || translate('entity.validation.number'),
-                }}
-              />
-              <ValidatedField
-                label={translate('jhipsterSampleApplicationApp.pagos.applicationDate')}
-                id="loan-applicationDate"
-                name="applicationDate"
-                data-cy="applicationDate"
-                type="date"
-              />
-              {currentUserIsAdmin ? (
-                <ValidatedField
-                  label={translate('jhipsterSampleApplicationApp.pagos.status')}
-                  id="loan-status"
-                  name="status"
-                  data-cy="status"
-                  type="select"
-                >
-                  <option value="0">Pendiente</option>
-                  <option value="1">Aprobado</option>
-                  <option value="2">Rechazado</option>
-                  <option value="3">Pagado</option>
-                  <option value="4">En mora</option>
-                </ValidatedField>
-              ) : (
-                <input type="hidden" name="status" value={defaultValues().status} />
-              )}
-              <ValidatedField
-                id="loan-user"
-                name="user"
-                data-cy="user"
-                label={translate('jhipsterSampleApplicationApp.pagos.user')}
-                type="select"
-              >
-                <option value="" key="0" />
-                {users
-                  ? users.map(otherEntity => (
-                    <option value={otherEntity.id} key={otherEntity.id}>
-                      {otherEntity.login}
-                    </option>
-                  ))
-                  : null}
-              </ValidatedField>
-              <Button tag={Link} id="cancel-save" data-cy="entityCreateCancelButton" to="/loan" replace color="info">
-                <FontAwesomeIcon icon="arrow-left" />
-                &nbsp;
-                <span className="d-none d-md-inline">
-                  <Translate contentKey="entity.action.back">Back</Translate>
-                </span>
-              </Button>
-              &nbsp;
               <Button color="primary" id="save-entity" data-cy="entityCreateSaveButton" type="submit" disabled={updating}>
                 <FontAwesomeIcon icon="save" />
                 &nbsp;
-                <Translate contentKey="entity.action.save">Save</Translate>
+                <Translate contentKey="entity.action.save">Pagar</Translate>
               </Button>
             </ValidatedForm>
           )}
+        </Col>
+      </Row>
+      <Row className="justify-content-center">
+        <Col md="8">
+          <h2 id="amortization-heading" data-cy="AmortizationHeading">
+            <Translate contentKey="jhipsterSampleApplicationApp.amortization.home.title">Amortizaciones</Translate>
+          </h2>
+          <div className="table-responsive">
+            {amortizationList && amortizationList.length > 0 ? (
+              <Table responsive>
+                <thead>
+                <tr>
+                  <th>
+                    <Translate contentKey="jhipsterSampleApplicationApp.amortization.installmentNumber">Número de Cuota</Translate>
+                  </th>
+                  <th>
+                    <Translate contentKey="jhipsterSampleApplicationApp.amortization.dueDate">Fecha de Vencimiento</Translate>
+                  </th>
+                  <th>
+                    <Translate contentKey="jhipsterSampleApplicationApp.amortization.remainingBalance">Saldo Restante</Translate>
+                  </th>
+                  <th>
+                    <Translate contentKey="jhipsterSampleApplicationApp.amortization.principal">Principal</Translate>
+                  </th>
+                  <th>
+                    <Translate contentKey="jhipsterSampleApplicationApp.amortization.paymentAmount">Monto de Pago</Translate>
+                  </th>
+                  <th>
+                    <Translate contentKey="jhipsterSampleApplicationApp.amortization.penaltyInterest">Interés de Penalización</Translate>
+                  </th>
+                </tr>
+                </thead>
+                <tbody>
+                {amortizationList.map((amortization, i) => (
+                  <tr key={`entity-${i}`} data-cy="entityTable">
+                    <td>{amortization.installmentNumber}</td>
+                    <td>{amortization.dueDate}</td>
+                    <td>{amortization.remainingBalance}</td>
+                    <td>{amortization.principal}</td>
+                    <td>{amortization.paymentAmount}</td>
+                    <td>{amortization.penaltyInterest}</td>
+                  </tr>
+                ))}
+                </tbody>
+              </Table>
+            ) : (
+              <div className="alert alert-warning">
+                <Translate contentKey="jhipsterSampleApplicationApp.amortization.home.notFound">No se encontraron Amortizaciones</Translate>
+              </div>
+            )}
+          </div>
         </Col>
       </Row>
     </div>
